@@ -6,3 +6,4 @@ httpx==0.24.1
 feedparser==6.0.10
 google-api-python-client==2.97.0
 pydantic==2.3.0
+SQLAlchemy==2.0.32

@@ -106,7 +106,7 @@ function App() {
         <header>
           <div className="header-content">
             <img src="/images/logo.png" alt="Logo" className="logo" />
-            <h1>Marxist TV</h1>
+            <h1>Marxist School</h1>
           </div>
         </header>
         <div className="content-container">
@@ -129,7 +129,7 @@ function App() {
         <header>
           <div className="header-content">
             <img src="/images/logo.png" alt="Logo" className="logo" />
-            <h1>Marxist TV</h1>
+            <h1>Marxist School</h1>
           </div>
         </header>
         <div className="content-container">
@@ -152,7 +152,7 @@ function App() {
       <header>
         <div className="header-content">
           <img src="/images/logo.png" alt="Logo" className="logo" />
-          <h1>Marxist TV</h1>
+          <h1>Marxist School</h1>
         </div>
         <SectionSelector 
           sections={sections}

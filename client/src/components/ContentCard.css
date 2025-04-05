@@ -1,0 +1,82 @@
+.content-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .content-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+  
+  .content-card .source {
+    font-size: 0.8rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  
+  .content-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  .content-card p {
+    color: #444;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    flex-grow: 1;
+  }
+  
+  .content-card .published {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  
+  .content-card a {
+    display: inline-block;
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: auto;
+  }
+  
+  .content-card a:hover {
+    text-decoration: underline;
+  }
+  
+  .content-card .thumbnail {
+    width: 100%;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .content-card .thumbnail img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  /* Card type-specific styles */
+  .content-card.social {
+    border-left: 4px solid #1da1f2;
+  }
+  
+  .content-card.rss {
+    border-left: 4px solid #ee802f;
+  }
+  
+  .content-card.youtube {
+    border-left: 4px solid #ff0000;
+  }

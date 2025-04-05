@@ -1,0 +1,57 @@
+.dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .dashboard-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .dashboard-header h1 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .filters button {
+    padding: 8px 16px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .filters button.active {
+    background-color: #0066cc;
+    color: white;
+    border-color: #0066cc;
+  }
+  
+  .content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .loading, .error, .no-content {
+    grid-column: 1 / -1;
+    padding: 40px;
+    text-align: center;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  .error {
+    color: #d9534f;
+  }

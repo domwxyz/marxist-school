@@ -1,17 +1,22 @@
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import asyncio
 from models.schemas import Channel, ChannelCreate, Video
 from database.db import get_db
 from services.youtube_service import YouTubeService
 from services.repository import (
     get_channels, get_channel, create_channel, get_videos, 
-    update_videos_for_channel, get_paginated_videos  # Add this import
+    update_videos_for_channel, get_paginated_videos
 )
+from services.rss_service import get_rss_feeds, get_rss_articles
+from services.social_service import get_social_posts
+from services.reading_list_service import get_reading_materials
 
 router = APIRouter()
 youtube_service = YouTubeService()
+
+# ===== EXISTING YOUTUBE VIDEO ROUTES =====
 
 @router.get("/channels", response_model=List[Channel])
 def read_channels(db: Session = Depends(get_db)):
@@ -117,14 +122,136 @@ async def refresh_channel(channel_id: str, background_tasks: BackgroundTasks, db
     
     return {"status": "Refresh task started"}
 
-# Background task to fetch and update videos
+# ===== NEW RSS FEED ROUTES =====
+
+@router.get("/rss")
+def read_rss_articles(section: Optional[str] = None, db: Session = Depends(get_db)):
+    """
+    Get RSS feed articles, optionally filtered by section
+    """
+    try:
+        articles = get_rss_articles(db, section)
+        return articles
+    except Exception as e:
+        print(f"Error fetching RSS articles: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/rss/load-more")
+def load_more_rss_articles(section: Optional[str] = None, cursor: Optional[str] = None, db: Session = Depends(get_db)):
+    """
+    Load more RSS articles with pagination
+    - section: Filter by section (optional)
+    - cursor: Last article ID or published date (optional)
+    """
+    try:
+        # Default to 10 articles per page
+        limit = 10
+        
+        # This would call a function similar to get_paginated_videos but for RSS
+        articles = get_rss_feeds(db, section, cursor, limit)
+        
+        # Return articles and next cursor for pagination
+        return articles
+    except Exception as e:
+        print(f"Error loading more RSS articles: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===== NEW SOCIAL MEDIA ROUTES =====
+
+@router.get("/social")
+def read_social_posts(section: Optional[str] = None, platform: Optional[str] = None, db: Session = Depends(get_db)):
+    """
+    Get social media posts, optionally filtered by section and platform
+    - section: Filter by section (optional)
+    - platform: Filter by platform (twitter, facebook, etc.) (optional)
+    """
+    try:
+        posts = get_social_posts(db, section, platform)
+        return posts
+    except Exception as e:
+        print(f"Error fetching social posts: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/social/load-more")
+def load_more_social_posts(
+    section: Optional[str] = None, 
+    platform: Optional[str] = None,
+    cursor: Optional[str] = None, 
+    db: Session = Depends(get_db)
+):
+    """
+    Load more social media posts with pagination
+    - section: Filter by section (optional)
+    - platform: Filter by platform (twitter, facebook, etc.) (optional)
+    - cursor: Last post ID or timestamp (optional)
+    """
+    try:
+        # Default to 10 posts per page
+        limit = 10
+        
+        # This would call a service function for paginated social posts
+        posts = get_social_posts(db, section, platform, cursor, limit)
+        
+        # Return posts and pagination info
+        return posts
+    except Exception as e:
+        print(f"Error loading more social posts: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===== NEW READING LIST ROUTES =====
+
+@router.get("/reading-list")
+def read_reading_materials(
+    section: Optional[str] = None, 
+    difficulty: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    """
+    Get reading materials, optionally filtered by section and difficulty
+    - section: Filter by section (optional)
+    - difficulty: Filter by difficulty level (beginner, intermediate, advanced) (optional)
+    """
+    try:
+        materials = get_reading_materials(db, section, difficulty)
+        return materials
+    except Exception as e:
+        print(f"Error fetching reading materials: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/reading-list/load-more")
+def load_more_reading_materials(
+    section: Optional[str] = None, 
+    difficulty: Optional[str] = None,
+    cursor: Optional[str] = None, 
+    db: Session = Depends(get_db)
+):
+    """
+    Load more reading materials with pagination
+    - section: Filter by section (optional)
+    - difficulty: Filter by difficulty level (beginner, intermediate, advanced) (optional)
+    - cursor: Last material ID (optional)
+    """
+    try:
+        # Default to 10 materials per page
+        limit = 10
+        
+        # This would call a service function for paginated reading materials
+        materials = get_reading_materials(db, section, difficulty, cursor, limit)
+        
+        # Return materials and pagination info
+        return materials
+    except Exception as e:
+        print(f"Error loading more reading materials: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Background task to fetch and update videos (existing function)
 async def fetch_and_update_videos(channel_id: str, uploads_playlist_id: str):
     """Fetch and update videos for a channel"""
     # Get a new DB session (since we're in a background task)
     db = next(get_db())
     
     # Fetch initial batch of videos from YouTube
-    max_results = 50  # Increased from 10 to 50
+    max_results = 50
     videos, next_page_token = youtube_service.get_playlist_videos(uploads_playlist_id, max_results)
     
     # Update database with initial batch

@@ -1,85 +1,156 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAllContent } from '../services/api';
-import ContentCard from './ContentCard';
+import VideoSection from './VideoSection';
+import RssSection from './RssSection';
+import SocialSection from './SocialSection';
+import ReadingListSection from './ReadingListSection';
+import SectionSelector from './SectionSelector';
 import './Dashboard.css';
 
 const Dashboard = () => {
-  const [content, setContent] = useState([]);
+  const [activeSection, setActiveSection] = useState('all');
+  const [sections, setSections] = useState(['all']);
+  const [content, setContent] = useState({
+    videos: [],
+    rssArticles: [],
+    socialPosts: [],
+    readingList: []
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeFilter, setActiveFilter] = useState('all');
 
+  // Fetch all content when component mounts or section changes
   useEffect(() => {
-    const loadContent = async () => {
+    const fetchContent = async () => {
       try {
         setLoading(true);
-        const data = await fetchAllContent();
-        setContent(data.content || []);
-        setError(null);
+        
+        // Fetch videos (existing functionality)
+        const videosResponse = await fetch(`http://localhost:8000/api/videos?section=${activeSection}`);
+        const videosData = await videosResponse.json();
+        
+        // Fetch RSS articles (new functionality)
+        const rssResponse = await fetch(`http://localhost:8000/api/rss?section=${activeSection}`);
+        const rssData = await rssResponse.json();
+        const rssArticles = rssData.articles || [];
+        
+        // Fetch social media posts (new functionality)
+        const socialResponse = await fetch(`http://localhost:8000/api/social?section=${activeSection}`);
+        const socialData = await socialResponse.json();
+        const socialPosts = socialData.posts || [];
+        
+        // Fetch reading list (new functionality)
+        const readingListResponse = await fetch(`http://localhost:8000/api/reading-list?section=${activeSection}`);
+        const readingListData = await readingListResponse.json();
+        const readingMaterials = readingListData.materials || [];
+        
+        // Extract unique sections from all content
+        if (sections.length <= 1) {
+          // Use only video data for sections initially since it's the only one fully implemented
+          const uniqueSections = ['all', ...new Set(videosData.map(item => item.section))];
+          setSections(uniqueSections);
+        }
+        
+        setContent({
+          videos: videosData,
+          rssArticles: rssArticles,
+          socialPosts: socialPosts,
+          readingList: readingMaterials
+        });
+        setLoading(false);
       } catch (err) {
+        console.error('Failed to fetch content:', err);
         setError('Failed to load content. Please try again later.');
-        console.error(err);
-      } finally {
         setLoading(false);
       }
     };
 
-    loadContent();
-  }, []);
+    fetchContent();
+    
+    // Set up periodic refreshing (every 5 minutes)
+    const intervalId = setInterval(() => fetchContent(), 300000);
+    return () => clearInterval(intervalId);
+  }, [activeSection]);
 
-  const filterContent = (type) => {
-    setActiveFilter(type);
+  const handleSectionChange = (section) => {
+    setActiveSection(section);
+    setContent({
+      videos: [],
+      rssArticles: [],
+      socialPosts: [],
+      readingList: []
+    });
   };
 
-  const filteredContent = activeFilter === 'all' 
-    ? content 
-    : content.filter(item => item.type === activeFilter);
+  if (loading && content.videos.length === 0) {
+    return (
+      <div className="dashboard-container">
+        <header className="dashboard-header">
+          <div className="header-content">
+            <img src="/images/logo.png" alt="Logo" className="logo" />
+            <h1>Marxist School</h1>
+          </div>
+          <SectionSelector 
+            sections={sections}
+            currentSection={activeSection}
+            onSectionChange={handleSectionChange}
+          />
+        </header>
+        <div className="loading">Loading content...</div>
+        <footer>
+          <a href="https://communistusa.org">Revolutionary Communists of America</a>
+        </footer>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="dashboard-container">
+        <header className="dashboard-header">
+          <div className="header-content">
+            <img src="/images/logo.png" alt="Logo" className="logo" />
+            <h1>Marxist School</h1>
+          </div>
+        </header>
+        <div className="error">{error}</div>
+        <footer>
+          <a href="https://communistusa.org">Revolutionary Communists of America</a>
+        </footer>
+      </div>
+    );
+  }
 
   return (
-    <div className="dashboard">
+    <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>Content Dashboard</h1>
-        <div className="filters">
-          <button 
-            className={activeFilter === 'all' ? 'active' : ''} 
-            onClick={() => filterContent('all')}
-          >
-            All
-          </button>
-          <button 
-            className={activeFilter === 'social' ? 'active' : ''} 
-            onClick={() => filterContent('social')}
-          >
-            Social Media
-          </button>
-          <button 
-            className={activeFilter === 'rss' ? 'active' : ''} 
-            onClick={() => filterContent('rss')}
-          >
-            RSS Feeds
-          </button>
-          <button 
-            className={activeFilter === 'youtube' ? 'active' : ''} 
-            onClick={() => filterContent('youtube')}
-          >
-            YouTube
-          </button>
+        <div className="header-content">
+          <img src="/images/logo.png" alt="Logo" className="logo" />
+          <h1>Marxist School</h1>
         </div>
+        <SectionSelector 
+          sections={sections}
+          currentSection={activeSection}
+          onSectionChange={handleSectionChange}
+        />
       </header>
-
-      <div className="content-grid">
-        {loading ? (
-          <div className="loading">Loading content...</div>
-        ) : error ? (
-          <div className="error">{error}</div>
-        ) : filteredContent.length === 0 ? (
-          <div className="no-content">No content found.</div>
-        ) : (
-          filteredContent.map((item, index) => (
-            <ContentCard key={index} item={item} />
-          ))
-        )}
+      
+      <div className="dashboard-grid">
+        {/* Video section - utilizing existing functionality */}
+        <VideoSection videos={content.videos} />
+        
+        {/* New RSS Feed section */}
+        <RssSection articles={content.rssArticles} />
+        
+        {/* New Social Media section */}
+        <SocialSection posts={content.socialPosts} />
+        
+        {/* New Reading List section */}
+        <ReadingListSection books={content.readingList} />
       </div>
+      
+      <footer>
+        <a href="https://communistusa.org">Revolutionary Communists of America</a>
+      </footer>
     </div>
   );
 };

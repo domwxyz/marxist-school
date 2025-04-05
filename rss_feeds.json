@@ -1,0 +1,20 @@
+[
+  {
+    "title": "RCA",
+    "url": "https://communistusa.org/feed",
+    "section": "RCA",
+    "description": "Revolutionary Communists of America"
+  },
+  {
+    "title": "RCI",
+    "url": "https://marxist.com/feed/rss",
+    "section": "RCI",
+    "description": "Revolutionary Communist International"
+  },
+  {
+    "title": "RCP",
+    "url": "https://communist.red/feed/",
+    "section": "RCP",
+    "description": "Revolutionary Communist Party"
+  }
+]

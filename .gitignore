@@ -6,3 +6,4 @@ client/.env
 /server/routes/__pycache__
 /server/models/__pycache__
 /server/database/__pycache__
+server/videos.db

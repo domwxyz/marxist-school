@@ -1,0 +1,50 @@
+[
+  {
+    "title": "The Communist Manifesto",
+    "author": "Karl Marx & Friedrich Engels",
+    "description": "A foundational text that outlines the theory of historical materialism and class struggle, published during the revolutions of 1848.",
+    "difficulty": "beginner",
+    "section": "RCA",
+    "cover_url": "https://example.com/covers/communist-manifesto.jpg",
+    "publication_year": "1848",
+    "pages": 48,
+    "reading_time": 90,
+    "tag_names": ["marxism", "communism", "history", "philosophy", "politics"]
+  },
+  {
+    "title": "Socialism: Utopian and Scientific",
+    "author": "Friedrich Engels",
+    "description": "A short work explaining the differences between utopian socialism and scientific socialism, laying out the materialist conception of history.",
+    "difficulty": "intermediate",
+    "section": "RCI",
+    "cover_url": "https://example.com/covers/socialism-utopian-scientific.jpg",
+    "publication_year": "1880",
+    "pages": 86,
+    "reading_time": 180,
+    "tag_names": ["marxism", "socialism", "philosophy", "history"]
+  },
+  {
+    "title": "State and Revolution",
+    "author": "Vladimir Lenin",
+    "description": "An analysis of the state, violent revolution, and the dictatorship of the proletariat, written during the Russian Revolution.",
+    "difficulty": "intermediate",
+    "section": "RCP",
+    "cover_url": "https://example.com/covers/state-revolution.jpg",
+    "publication_year": "1917",
+    "pages": 116,
+    "reading_time": 240,
+    "tag_names": ["leninism", "state", "revolution", "politics"]
+  },
+  {
+    "title": "The Transitional Program",
+    "author": "Leon Trotsky",
+    "description": "A program of transitional demands aimed at bridging immediate struggles with the ultimate goal of socialist revolution, written for the founding conference of the Fourth International.",
+    "difficulty": "advanced",
+    "section": "RCI",
+    "cover_url": "https://example.com/covers/transitional-program.jpg",
+    "publication_year": "1938",
+    "pages": 68,
+    "reading_time": 140,
+    "tag_names": ["trotskyism", "program", "strategy", "tactics"]
+  }
+]

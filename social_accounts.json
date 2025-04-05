@@ -1,0 +1,26 @@
+[
+  {
+    "platform": "twitter",
+    "username": "RCI",
+    "display_name": "Revolutionary Communist International",
+    "profile_url": "https://x.com/revcomintern",
+    "avatar_url": "",
+    "section": "RCI"
+  },
+  {
+    "platform": "twitter",
+    "username": "RCA",
+    "display_name": "Revolutionary Communists of America",
+    "profile_url": "https://x.com/communistsus",
+    "avatar_url": "",
+    "section": "RCA"
+  },
+  {
+    "platform": "twitter",
+    "username": "RCP",
+    "display_name": "Revolutionary Communist Party",
+    "profile_url": "https://x.com/revcommunists",
+    "avatar_url": "",
+    "section": "RCP"
+  }
+]

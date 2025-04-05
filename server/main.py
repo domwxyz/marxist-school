@@ -7,11 +7,16 @@ import asyncio
 from database.db import engine, Base
 from routes.api import router as api_router
 from services.background import start_periodic_update
+from services.repository import get_channel, create_channel
+from services.youtube_service import YouTubeService
+from services.rss_service import fetch_and_update_rss_feeds, get_rss_feeds
+from services.social_service import add_social_account, fetch_social_posts
+from services.reading_list_service import import_marxist_classics
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="YouTube Aggregator API")
+app = FastAPI(title="Marxist School API")
 
 # Configure CORS
 app.add_middleware(
@@ -35,8 +40,6 @@ async def startup_event():
 async def load_channels_from_config():
     try:
         from database.db import get_db
-        from services.youtube_service import YouTubeService
-        from services.repository import get_channel, create_channel
         
         # Create a YouTube service instance
         youtube_service = YouTubeService()
@@ -87,6 +90,95 @@ async def load_channels_from_config():
                 )
     except Exception as e:
         print(f"Error loading channels from config: {e}")
+
+# Load RSS feeds from config
+@app.on_event("startup")
+async def load_rss_feeds_from_config():
+    try:
+        from database.db import get_db
+        
+        # Get DB session
+        db = next(get_db())
+        
+        # Check if rss_feeds.json exists
+        config_path = os.path.join(os.path.dirname(__file__), "..", "rss_feeds.json")
+        if os.path.exists(config_path):
+            with open(config_path, "r") as f:
+                feeds = json.load(f)
+            
+            print(f"Loading {len(feeds)} RSS feeds from configuration file...")
+            
+            # Update feeds in background
+            asyncio.create_task(fetch_and_update_rss_feeds(db, feeds))
+        else:
+            print("No RSS feeds configuration found")
+    except Exception as e:
+        print(f"Error loading RSS feeds from config: {e}")
+
+# Load social media accounts from config
+@app.on_event("startup")
+async def load_social_accounts_from_config():
+    try:
+        from database.db import get_db
+        
+        # Get DB session
+        db = next(get_db())
+        
+        # Check if social_accounts.json exists
+        config_path = os.path.join(os.path.dirname(__file__), "..", "social_accounts.json")
+        if os.path.exists(config_path):
+            with open(config_path, "r") as f:
+                accounts = json.load(f)
+            
+            print(f"Loading {len(accounts)} social media accounts from configuration file...")
+            
+            # Add each account
+            for account_data in accounts:
+                try:
+                    account = add_social_account(db, account_data)
+                    print(f"Added social account: {account.platform} - {account.username}")
+                    
+                    # Fetch posts in background (this would need platform-specific API implementations)
+                    # asyncio.create_task(fetch_social_posts(db, None, account.id))
+                except Exception as ae:
+                    print(f"Error adding social account: {ae}")
+                    continue
+        else:
+            print("No social accounts configuration found")
+    except Exception as e:
+        print(f"Error loading social accounts from config: {e}")
+
+# Import initial reading list
+@app.on_event("startup")
+async def import_initial_reading_list():
+    try:
+        from database.db import get_db
+        
+        # Get DB session
+        db = next(get_db())
+        
+        # Check if reading_list.json exists
+        config_path = os.path.join(os.path.dirname(__file__), "..", "reading_list.json")
+        if os.path.exists(config_path):
+            with open(config_path, "r") as f:
+                materials = json.load(f)
+            
+            print(f"Loading {len(materials)} reading materials from configuration file...")
+            
+            # Add each material
+            from services.reading_list_service import add_reading_material
+            for material_data in materials:
+                try:
+                    add_reading_material(db, material_data)
+                except Exception as me:
+                    print(f"Error adding reading material: {me}")
+                    continue
+        else:
+            print("No reading list configuration found, importing classics...")
+            # Import classic Marxist texts
+            import_marxist_classics(db)
+    except Exception as e:
+        print(f"Error importing reading list: {e}")
 
 async def fetch_and_update_videos(channel_id: str, uploads_playlist_id: str):
     # Import here to avoid circular imports

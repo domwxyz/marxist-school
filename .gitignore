@@ -2,3 +2,7 @@
 server/.env
 client/.env
 /server/__pycache__
+/server/services/__pycache__
+/server/routes/__pycache__
+/server/models/__pycache__
+/server/database/__pycache__

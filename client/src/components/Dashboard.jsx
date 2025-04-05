@@ -134,18 +134,28 @@ const Dashboard = () => {
         />
       </header>
       
-      <div className="dashboard-grid">
-        {/* Video section - utilizing existing functionality */}
-        <VideoSection videos={content.videos} />
-        
-        {/* New RSS Feed section */}
-        <RssSection articles={content.rssArticles} />
-        
-        {/* New Social Media section */}
-        <SocialSection posts={content.socialPosts} />
-        
-        {/* New Reading List section */}
-        <ReadingListSection books={content.readingList} />
+      <div className="dashboard-content">
+        <div className="dashboard-grid">
+          {/* Video section - upper left */}
+          <div className="video-section section-wrapper">
+            <VideoSection videos={content.videos} />
+          </div>
+          
+          {/* RSS Feed section - upper right */}
+          <div className="rss-section section-wrapper">
+            <RssSection articles={content.rssArticles} />
+          </div>
+          
+          {/* Reading List section - lower left */}
+          <div className="reading-list-section section-wrapper">
+            <ReadingListSection books={content.readingList} />
+          </div>
+          
+          {/* Social Media section - lower right */}
+          <div className="social-section section-wrapper">
+            <SocialSection posts={content.socialPosts} />
+          </div>
+        </div>
       </div>
       
       <footer>

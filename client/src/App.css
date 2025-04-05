@@ -14,10 +14,15 @@
 }
 
 /* ===== BASE STYLES ===== */
-body {
-  font-family: var(--body-font);
+html, body {
+  height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--body-font);
   background-color: var(--background);
   color: var(--text);
   line-height: 1.6;
@@ -27,11 +32,16 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--heading-font);
 }
 
+#root {
+  height: 100%;
+}
+
 /* ===== LAYOUT ===== */
 .app-container {
-  max-width: 1200px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0 10px;
+  padding: 0 20px;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -44,17 +54,20 @@ h1, h2, h3, h4, h5, h6 {
   gap: 20px;
   flex: 1;
   margin: 10px 0;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .main-column {
-  flex: 2;
+  flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 0; /* Allow proper overflow handling */
 }
 
 .list-container {
-  flex: 1;
+  width: 35%;
+  min-width: 300px;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
 }
@@ -66,7 +79,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 8px;
   overflow: hidden;
   background-color: var(--surface);
-  margin-bottom: 10px;
+  height: 100%;
 }
 
 .player-container {
@@ -186,7 +199,7 @@ h1 {
   margin-top: 0;
   margin-bottom: 10px;
   color: var(--primary-color);
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .channel-title {
@@ -325,6 +338,10 @@ h1 {
   padding: 50px;
   font-size: 18px;
   color: var(--primary-color);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .video-placeholder {
@@ -363,12 +380,11 @@ footer a:hover {
 }
 
 /* ===== RESPONSIVE STYLES ===== */
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1200px) {
   .app-container {
-    padding: 0 8px;
-    max-width: 100%;
+    padding: 0 15px;
   }
-
+  
   h1 {
     font-size: 28px;
   }
@@ -376,35 +392,46 @@ footer a:hover {
   .logo {
     height: 36px;
   }
+}
+
+@media screen and (max-width: 1000px) {
+  .content-container {
+    gap: 15px;
+  }
   
-  footer {
-    padding: 8px;
-    font-size: 10px;
+  .thumbnail {
+    width: 80px;
+  }
+  
+  .video-info h2 {
+    font-size: 1.2rem;
   }
 }
 
-/* Tablet and smaller screens */
+/* Tablet screens */
 @media screen and (max-width: 768px) {
+  html, body, #root {
+    height: auto;
+    overflow: auto;
+  }
+  
   .app-container {
     height: auto;
-    min-height: 100vh;
+    overflow: auto;
   }
   
   .content-container {
     flex-direction: column;
-    gap: 10px;
-    overflow-y: auto;
   }
   
   .main-column {
-    flex: 0 0 auto; /* Don't grow or shrink, just be the size needed */
     width: 100%;
   }
   
   .list-container {
-    flex: 0 0 auto; /* Don't grow or shrink, just be the size needed */
     width: 100%;
-    min-height: 300px;
+    max-width: none;
+    margin-top: 15px;
     max-height: 400px;
   }
 }
@@ -412,27 +439,19 @@ footer a:hover {
 /* Mobile screens */
 @media screen and (max-width: 480px) {
   .app-container {
-    margin: 0 auto;
-    padding: 0 5px;
+    padding: 0 10px;
   }
   
   header {
     padding: 10px;
-    margin-top: 10px;
   }
   
   h1 {
-    font-size: 24px;
+    font-size: 22px;
   }
   
   .logo {
     height: 28px;
-  }
-  
-  /* Adjust section selector for mobile */
-  .section-selector {
-    gap: 5px;
-    margin: 8px 0;
   }
   
   .section-selector button {
@@ -440,69 +459,23 @@ footer a:hover {
     font-size: 12px;
   }
   
-  /* Improve video player layout for mobile */
   .video-player {
     padding: 10px;
   }
   
-  .video-container {
-    margin-bottom: 10px;
-  }
-  
-  /* Fix video info rendering on mobile */
-  .video-info {
-    max-height: none;
-    overflow: visible;
-  }
-  
   .video-info h2 {
-    font-size: 18px;
-    margin-bottom: 8px;
-  }
-  
-  /* Make description scrollable independently */
-  .video-description {
-    border-top: 1px solid var(--divider);
-    padding-top: 8px;
-    margin-top: 8px;
-    overflow-y: auto;
-  }
-  
-  /* Improve video list rendering */
-  .video-list {
-    padding: 10px;
-  }
-  
-  .video-list h3 {
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-  
-  .video-scroll {
-    max-height: 300px;
-  }
-  
-  .thumbnail {
-    width: 80px;
-  }
-  
-  .video-item {
-    padding: 6px;
+    font-size: 1.1rem;
   }
   
   .video-item h4 {
-    font-size: 13px;
+    font-size: 0.8rem;
   }
   
-  /* Better button for mobile touch */
+  .thumbnail {
+    width: 70px;
+  }
+  
   .load-more-button {
-    padding: 8px 16px;
-    font-size: 14px;
-    min-height: 40px; /* Better touch target */
-  }
-  
-  footer {
-    margin-bottom: 10px;
-    padding: 8px;
+    width: 100%;
   }
 }

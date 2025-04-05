@@ -75,12 +75,35 @@
           --body-font: 'Cambria', Georgia, serif;
       }
 
-      /* Base styles to ensure fonts are applied immediately */
+      /* Full viewport styles for proper layout */
+      html, body, #root {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      
       body {
-          font-family: var(--body-font);
-          margin: 0;
-          padding: 0;
-          background-color: var(--background);
+        font-family: var(--body-font);
+        margin: 0;
+        padding: 0;
+        background-color: var(--background);
+        overflow: hidden;
+      }
+      
+      #root {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      
+      /* Ensures container takes full height */
+      .dashboard-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        max-height: 100vh;
+        overflow: hidden;
       }
 
       h1, h2, h3, h4, h5, h6 {

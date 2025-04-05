@@ -10,7 +10,6 @@ const VideoSection = ({ videos }) => {
 
   const handleVideoSelect = (video) => {
     setCurrentVideo(video);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLoadMore = async () => {
@@ -46,27 +45,71 @@ const VideoSection = ({ videos }) => {
   };
 
   return (
-    <div className="section-card video-section">
+    <div className="section-card">
       <h2 className="section-header">Videos</h2>
-      <div className="content-container">
-        {/* Main column with video player */}
-        <div className="main-column">
-          <div className="card-container player-container">
-            <VideoPlayer video={currentVideo} />
-          </div>
-        </div>
-        
-        {/* Video list column */}
-        <div className="list-container card-container">
-          <VideoList 
-            videos={videos}
-            currentVideo={currentVideo}
-            onSelectVideo={handleVideoSelect}
-            onLoadMore={handleLoadMore}
-            hasMore={hasMore}
-            isLoading={loadingMore}
-          />
-        </div>
+      <div className="section-content">
+        {videos.length > 0 ? (
+          <>
+            <div className="video-container">
+              <iframe
+                width="100%"
+                height="100%"
+                src={currentVideo ? `https://www.youtube.com/embed/${currentVideo.id}` : ''}
+                title={currentVideo ? currentVideo.title : 'Video player'}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+            
+            {currentVideo && (
+              <div className="video-info">
+                <h3>{currentVideo.title}</h3>
+                <p className="channel-title">{currentVideo.channel_title}</p>
+                <p className="publish-date">
+                  {new Date(currentVideo.published_at).toLocaleDateString()}
+                </p>
+              </div>
+            )}
+            
+            <div className="video-list-compact">
+              <h4>More Videos</h4>
+              <div className="video-scroll">
+                {videos.slice(0, 5).map((video) => (
+                  <div
+                    key={video.id}
+                    className={`video-item ${currentVideo && video.id === currentVideo.id ? 'active' : ''}`}
+                    onClick={() => handleVideoSelect(video)}
+                  >
+                    <div className="thumbnail">
+                      <img src={video.thumbnail_url} alt={video.title} />
+                    </div>
+                    <div className="video-info">
+                      <h4>{video.title}</h4>
+                      <p className="date">
+                        {new Date(video.published_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {hasMore && (
+                <div className="load-more-container">
+                  <button 
+                    className="load-more-button" 
+                    onClick={handleLoadMore}
+                    disabled={loadingMore}
+                  >
+                    {loadingMore ? 'Loading...' : 'Load More'}
+                  </button>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="no-content">No videos available</div>
+        )}
       </div>
     </div>
   );
